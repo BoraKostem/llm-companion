@@ -1,0 +1,116 @@
+.llm-topbar-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #5472d3;
+  border-radius: 6px;
+  background: #2d3e7e;
+  color: #fff;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.llm-topbar-button:hover {
+  background: #3a51a3;
+}
+
+.llm-chat-panel {
+  position: fixed;
+  left: clamp(72px, 18vw, 280px);
+  right: 0;
+  bottom: 0;
+  height: min(42vh, 360px);
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #3b4a7d;
+  background: #0b1019;
+  color: #d8e2ff;
+  z-index: 2000;
+  box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.llm-chat-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px;
+  border-bottom: 1px solid #2a355d;
+  background: #141c2b;
+}
+
+.llm-chat-panel-header-left {
+  display: grid;
+  gap: 8px;
+}
+
+.llm-model-select-label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.llm-chat-panel-header button {
+  border: 1px solid #4d5e97;
+  background: #1a2542;
+  color: #d8e2ff;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.llm-model-select-label select,
+.llm-chat-input-row textarea {
+  width: 100%;
+  border: 1px solid #4f5f96;
+  border-radius: 6px;
+  background: #0f1730;
+  color: #d8e2ff;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.llm-chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+}
+
+.llm-chat-message {
+  border-radius: 8px;
+  padding: 8px;
+  white-space: pre-wrap;
+  font-size: 12px;
+}
+
+.llm-chat-message-user {
+  background: #1f377f;
+}
+
+.llm-chat-message-assistant {
+  background: #19243f;
+}
+
+.llm-chat-input-row {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #2a355d;
+  background: #0f1625;
+}
+
+.llm-chat-input-row button {
+  justify-self: end;
+  border: 1px solid #5472d3;
+  border-radius: 6px;
+  background: #2d3e7e;
+  color: #fff;
+  padding: 6px 12px;
+}
+
+.llm-chat-input-row button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}

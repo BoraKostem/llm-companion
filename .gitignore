@@ -1,31 +1,44 @@
-*.d.ts
-*.gz
-*.lock
-*.log
-*.map
-*.out
-*.tgz
-*.tmp
-*~
-?.*
+# Build output
+/out/
+/dist/
 
+# Dependencies
+/node_modules/
+
+# Package tarballs
+*.tgz
+
+# Logs
+*.log
+
+# Generated type declarations (keep custom ones)
+*.d.ts
 !custom.d.ts
 !env.d.ts
 !*.d.css.ts
 !*.d.scss.ts
 
-/dist/
+# Lock files
+*.lock
 
-/freelens/
+# Source maps
+*.map
 
-.turbo
+# OS files
+*.DS_Store
+Thumbs.db
 
+# IDE
+/.idea/
+/.vscode/
+*.swp
+*~
+
+# Test / coverage
 /coverage/
-/node_modules/
-/out/
-
 /.nyc_output/
 
-*.DS_Store
-/.idea
-/.vscode
+# Misc
+*.tmp
+*.gz
+.turbo

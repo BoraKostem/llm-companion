@@ -1,154 +1,69 @@
-# @freelensapp/example-extension
+# @borakostem/llm-companion
 
-<!-- markdownlint-disable MD013 -->
+A Freelens extension that adds a context-aware LLM chat assistant for Kubernetes clusters.
 
-[![Home](https://img.shields.io/badge/%F0%9F%8F%A0-freelens.app-02a7a0)](https://freelens.app)
-[![GitHub](https://img.shields.io/github/stars/freelensapp/freelens?style=flat&label=GitHub%20%E2%AD%90)](https://github.com/freelensapp/freelens)
-[![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/freelensapp/freelens-example-extension)
-[![Release](https://img.shields.io/github/v/release/freelensapp/freelens-example-extension?display_name=tag&sort=semver)](https://github.com/freelensapp/freelens-example-extension)
-[![Integration tests](https://github.com/freelensapp/freelens-example-extension/actions/workflows/integration-tests.yaml/badge.svg?branch=main)](https://github.com/freelensapp/freelens-example-extension/actions/workflows/integration-tests.yaml)
-[![npm](https://img.shields.io/npm/v/@freelensapp/example-extension.svg)](https://www.npmjs.com/package/@freelensapp/example-extension)
+## Features
 
-<!-- markdownlint-enable MD013 -->
-
-This repository serves as an example how to build and publish extensions for
-Freelens application.
-
-Visit wiki page about [creating
-extensions](https://github.com/freelensapp/freelens/wiki/Creating-extensions)
-for more informations.
+- **Multi-provider support** — OpenAI, Anthropic (Claude), Google Gemini, and Ollama
+- **Dynamic model discovery** — fetches available models from each provider's API
+- **Context-aware** — automatically reads your current Freelens view (pods, deployments, services, etc.) and provides it as context to the LLM
+- **kubectl integration** — the assistant can run read-only kubectl commands against your cluster with user confirmation before execution
+- **Multi-turn conversation** — maintains chat history within a session
+- **Safety guards** — only read-only kubectl commands are allowed; destructive operations are blocked
 
 ## Requirements
 
-- Kubernetes >= 1.24
 - Freelens >= 1.8.0
+- kubectl configured and accessible in PATH
+- An API key for at least one supported provider (or a local Ollama instance)
 
-## API supported
+## Supported Providers
 
-- example.freelens.app/v1alpha1
-
-To install Custom Resource Definition for this example run:
-
-```sh
-kubectl apply -f examples/crds/customresourcedefinition.yaml
-```
-
-Examples provide a resource for test:
-
-```sh
-kubectl apply -f examples/test/example.yaml
-```
+| Provider | API Key Required | Custom Base URL |
+|----------|-----------------|-----------------|
+| OpenAI | Yes | Optional |
+| Anthropic | Yes | No |
+| Google Gemini | Yes | No |
+| Ollama | No | Yes (default: `http://127.0.0.1:11434`) |
 
 ## Install
 
-To install open Freelens and go to Extensions (`ctrl`+`shift`+`E` or
-`cmd`+`shift`+`E`), and install `@freelensapp/example-extension`.
+Open Freelens, go to Extensions (`Ctrl+Shift+E` / `Cmd+Shift+E`), and install `@borakostem/llm-companion`.
 
-or:
+## Configuration
 
-Use a following URL in the browser:
-[freelens://app/extensions/install/%40freelensapp%2Fexample-extension](freelens://app/extensions/install/%40freelensapp%2Fexample-extension)
+After installing, go to Freelens **Preferences > Extensions > LLM Companion** to configure:
 
-## Build from the source
+1. Select your preferred LLM provider
+2. Enter the API key for your provider
+3. Choose a model from the dynamically loaded list
 
-You can build the extension using this repository.
+## Build from Source
 
 ### Prerequisites
 
-Use [NVM](https://github.com/nvm-sh/nvm) or
-[mise-en-place](https://mise.jdx.dev/) or
-[windows-nvm](https://github.com/coreybutler/nvm-windows) to install the
-required Node.js version.
+- Node.js >= 22
+- pnpm (via corepack)
 
-From the root of this repository:
-
-```sh
-nvm install
-# or
-mise install
-# or
-winget install CoreyButler.NVMforWindows
-nvm install 22.21.1
-nvm use 22.21.1
-```
-
-Install Pnpm:
+### Build
 
 ```sh
 corepack install
-# or
-curl -fsSL https://get.pnpm.io/install.sh | sh -
-# or
-winget install pnpm.pnpm
-```
-
-### Build extension
-
-```sh
-pnpm i
+pnpm install
 pnpm build
 pnpm pack
 ```
 
-One script to build then pack the extension to test:
+Or use the dev build script:
 
 ```sh
 pnpm pack:dev
 ```
 
-### Install built extension
+### Install Built Extension
 
-The tarball for the extension will be placed in the current directory. In
-Freelens, navigate to the Extensions list and provide the path to the tarball
-to be loaded, or drag and drop the extension tarball into the Freelens window.
-After loading for a moment, the extension should appear in the list of enabled
-extensions.
-
-### Check code statically
-
-```sh
-pnpm lint:check
-```
-
-or
-
-```sh
-pnpm trunk:check
-```
-
-and
-
-```sh
-pnpm build
-pnpm knip:check
-```
-
-### Testing the extension with unpublished Freelens
-
-In Freelens working repository:
-
-```sh
-rm -f *.tgz
-pnpm i
-pnpm build
-pnpm pack -r
-```
-
-then for extension:
-
-```sh
-echo "overrides:" >> pnpm-workspace.yaml
-for i in ../freelens/*.tgz; do
-  name=$(tar zxOf $i package/package.json | jq -r .name)
-  echo "  \"$name\": $i" >> pnpm-workspace.yaml
-done
-
-pnpm clean:node_modules
-pnpm build
-```
+The tarball will be placed in the project root. In Freelens, navigate to the Extensions list and provide the path to the tarball, or drag and drop it into the Freelens window.
 
 ## License
 
-Copyright (c) 2025 Freelens Authors.
-
-[MIT License](https://opensource.org/licenses/MIT)
+MIT
