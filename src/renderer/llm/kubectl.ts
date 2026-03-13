@@ -58,8 +58,9 @@ interface ClusterStoreData {
 
 function getFreelensDataDir(): string {
   // On Windows: %APPDATA%/Freelens, on macOS: ~/Library/Application Support/Freelens, on Linux: ~/.config/Freelens
-  const appData = process.env.APPDATA
-    ?? (process.platform === "darwin"
+  const appData =
+    process.env.APPDATA ??
+    (process.platform === "darwin"
       ? join(process.env.HOME ?? "", "Library", "Application Support")
       : join(process.env.HOME ?? "", ".config"));
 
@@ -191,27 +192,30 @@ export async function runKubectl(command: string): Promise<KubectlResult> {
   const displayCommand = `kubectl ${args.join(" ")}`;
 
   return new Promise((resolve) => {
-    execFile("kubectl", kubectlArgs, { timeout: KUBECTL_TIMEOUT_MS, maxBuffer: MAX_OUTPUT_BYTES }, (error, stdout, stderr) => {
-      if (error) {
+    execFile(
+      "kubectl",
+      kubectlArgs,
+      { timeout: KUBECTL_TIMEOUT_MS, maxBuffer: MAX_OUTPUT_BYTES },
+      (error, stdout, stderr) => {
+        if (error) {
+          resolve({
+            command: displayCommand,
+            output: stderr?.trim() || error.message,
+            error: true,
+          });
+
+          return;
+        }
+
+        const output = stdout.trim();
+
         resolve({
           command: displayCommand,
-          output: stderr?.trim() || error.message,
-          error: true,
+          output: output.length > MAX_OUTPUT_BYTES ? `${output.slice(0, MAX_OUTPUT_BYTES)}\n... (truncated)` : output,
+          error: false,
         });
-
-        return;
-      }
-
-      const output = stdout.trim();
-
-      resolve({
-        command: displayCommand,
-        output: output.length > MAX_OUTPUT_BYTES
-          ? `${output.slice(0, MAX_OUTPUT_BYTES)}\n... (truncated)`
-          : output,
-        error: false,
-      });
-    });
+      },
+    );
   });
 }
 

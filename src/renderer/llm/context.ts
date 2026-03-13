@@ -27,7 +27,10 @@ const ROUTE_MAPPINGS: RouteKubectlMapping[] = [
   {
     pattern: /\/deployments\/([^/]+)\/([^/]+)/,
     description: "viewing deployment details",
-    commands: (m) => [`kubectl get deployment ${m[2]} -n ${m[1]} -o wide`, `kubectl describe deployment ${m[2]} -n ${m[1]}`],
+    commands: (m) => [
+      `kubectl get deployment ${m[2]} -n ${m[1]} -o wide`,
+      `kubectl describe deployment ${m[2]} -n ${m[1]}`,
+    ],
   },
   {
     pattern: /\/deployments(?:\/([^/]+))?/,
@@ -67,7 +70,10 @@ const ROUTE_MAPPINGS: RouteKubectlMapping[] = [
   {
     pattern: /\/statefulsets\/([^/]+)\/([^/]+)/,
     description: "viewing statefulset details",
-    commands: (m) => [`kubectl get statefulset ${m[2]} -n ${m[1]} -o wide`, `kubectl describe statefulset ${m[2]} -n ${m[1]}`],
+    commands: (m) => [
+      `kubectl get statefulset ${m[2]} -n ${m[1]} -o wide`,
+      `kubectl describe statefulset ${m[2]} -n ${m[1]}`,
+    ],
   },
   {
     pattern: /\/statefulsets(?:\/([^/]+))?/,
@@ -77,7 +83,10 @@ const ROUTE_MAPPINGS: RouteKubectlMapping[] = [
   {
     pattern: /\/daemonsets\/([^/]+)\/([^/]+)/,
     description: "viewing daemonset details",
-    commands: (m) => [`kubectl get daemonset ${m[2]} -n ${m[1]} -o wide`, `kubectl describe daemonset ${m[2]} -n ${m[1]}`],
+    commands: (m) => [
+      `kubectl get daemonset ${m[2]} -n ${m[1]} -o wide`,
+      `kubectl describe daemonset ${m[2]} -n ${m[1]}`,
+    ],
   },
   {
     pattern: /\/daemonsets(?:\/([^/]+))?/,
@@ -162,7 +171,11 @@ const ROUTE_MAPPINGS: RouteKubectlMapping[] = [
   {
     pattern: /\/events(?:\/([^/]+))?/,
     description: "viewing events",
-    commands: (m) => [m[1] ? `kubectl get events -n ${m[1]} --sort-by=.lastTimestamp` : "kubectl get events -A --sort-by=.lastTimestamp"],
+    commands: (m) => [
+      m[1]
+        ? `kubectl get events -n ${m[1]} --sort-by=.lastTimestamp`
+        : "kubectl get events -A --sort-by=.lastTimestamp",
+    ],
   },
   {
     pattern: /\/endpoints(?:\/([^/]+))?/,
@@ -225,9 +238,7 @@ async function getRouteContext(route: string): Promise<{ description: string; co
       console.log("[LLM] route matched:", mapping.description);
 
       const results = await Promise.all(mapping.commands(match).map(runKubectl));
-      const content = results
-        .map((r) => `$ ${r.command}\n${r.error ? `ERROR: ${r.output}` : r.output}`)
-        .join("\n\n");
+      const content = results.map((r) => `$ ${r.command}\n${r.error ? `ERROR: ${r.output}` : r.output}`).join("\n\n");
 
       return { description: mapping.description, content };
     }
@@ -269,12 +280,11 @@ export function createSystemPrompt(context: UiContext): string {
     '  "I\'ll run the following command to get that information:\\n\\n`kubectl get pods -n kube-system`\\n\\nShall I proceed?"',
     "- Only output <kubectl> tags AFTER the user has confirmed (said yes, ok, sure, go ahead, etc.).",
     "- If the user's message is a direct confirmation (yes, ok, sure, go ahead, y, proceed) to a previous command proposal, go ahead and run the command.",
-    "- When the user asks to \"list pods\" or similar direct requests, propose the command first.",
+    '- When the user asks to "list pods" or similar direct requests, propose the command first.',
     "",
     "## Context",
     `Current UI route: ${context.route}`,
     "Use the screen content above to understand what the user is currently looking at.",
     "Use kubectl to gather additional cluster information when needed.",
-  ]
-    .join("\n");
+  ].join("\n");
 }

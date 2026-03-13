@@ -1,12 +1,11 @@
-import { Renderer } from "@freelensapp/extensions";
 import { get as httpGet } from "node:http";
 import { get as httpsGet } from "node:https";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { Renderer } from "@freelensapp/extensions";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { providerDefaults, providerModelOptions } from "../../../common/llm-config";
 import { LlmPreferencesStore } from "../../../common/store";
-import { runAssistant, type ChatMessage } from "../../llm/model";
 import { extractKubectlCommands, stripKubectlTags } from "../../llm/kubectl";
-
+import { type ChatMessage, runAssistant } from "../../llm/model";
 
 interface OllamaTagsResponse {
   models?: Array<{
@@ -272,8 +271,10 @@ async function fetchOpenAIModelNames(apiKey: string, baseUrl: string): Promise<s
   const names = uniqueNonEmpty(data.map((item) => item.id ?? ""));
 
   // Filter to chat models only (exclude embeddings, tts, dall-e, whisper, etc.)
-  const chatModels = names.filter((name) =>
-    /^(gpt-|o[1-9]|chatgpt-)/.test(name) && !/instruct|embed|tts|whisper|dall-e|realtime|audio|search|moderation/.test(name),
+  const chatModels = names.filter(
+    (name) =>
+      /^(gpt-|o[1-9]|chatgpt-)/.test(name) &&
+      !/instruct|embed|tts|whisper|dall-e|realtime|audio|search|moderation/.test(name),
   );
 
   if (chatModels.length > 0) {
@@ -375,9 +376,10 @@ export const LlmTopBarChat = () => {
 
         setModelOptions(options);
 
-        const nextModel = !preferences.model.trim() || !options.includes(preferences.model.trim())
-          ? options[0] ?? fallback
-          : preferences.model;
+        const nextModel =
+          !preferences.model.trim() || !options.includes(preferences.model.trim())
+            ? (options[0] ?? fallback)
+            : preferences.model;
 
         preferences.model = nextModel;
         setSelectedModel(nextModel);
@@ -393,7 +395,9 @@ export const LlmTopBarChat = () => {
 
         if (hardcoded.length > 0) {
           setModelOptions(hardcoded);
-          setSelectedModel(preferences.model.trim() && hardcoded.includes(preferences.model.trim()) ? preferences.model : hardcoded[0]);
+          setSelectedModel(
+            preferences.model.trim() && hardcoded.includes(preferences.model.trim()) ? preferences.model : hardcoded[0],
+          );
           setModelLoadError(`Using default model list (${message})`);
         } else {
           setModelOptions([]);
@@ -412,7 +416,16 @@ export const LlmTopBarChat = () => {
     return () => {
       cancelled = true;
     };
-  }, [preferences, preferences.provider, preferences.ollamaBaseUrl, preferences.openAIApiKey, preferences.openAIBaseUrl, preferences.anthropicApiKey, preferences.googleApiKey, modelRefreshVersion]);
+  }, [
+    preferences,
+    preferences.provider,
+    preferences.ollamaBaseUrl,
+    preferences.openAIApiKey,
+    preferences.openAIBaseUrl,
+    preferences.anthropicApiKey,
+    preferences.googleApiKey,
+    modelRefreshVersion,
+  ]);
 
   const send = async () => {
     const prompt = input.trim();
@@ -428,18 +441,25 @@ export const LlmTopBarChat = () => {
     setMessages((current) => [...current, { role: "user", content: prompt }]);
 
     try {
-      const rawResponse = await runAssistant(prompt, messages, preferences, pendingKubectlCommands.length > 0 && isConfirmation);
+      const rawResponse = await runAssistant(
+        prompt,
+        messages,
+        preferences,
+        pendingKubectlCommands.length > 0 && isConfirmation,
+      );
       const kubectlCommands = extractKubectlCommands(rawResponse);
       const cleanedResponse = stripKubectlTags(rawResponse);
-      const response = cleanedResponse || (kubectlCommands.length > 0
-        ? [
-            `I'll run the following command${kubectlCommands.length > 1 ? "s" : ""}:`,
-            "",
-            ...kubectlCommands.map((command) => `- \`${command}\``),
-            "",
-            "Shall I proceed?",
-          ].join("\n")
-        : rawResponse);
+      const response =
+        cleanedResponse ||
+        (kubectlCommands.length > 0
+          ? [
+              `I'll run the following command${kubectlCommands.length > 1 ? "s" : ""}:`,
+              "",
+              ...kubectlCommands.map((command) => `- \`${command}\``),
+              "",
+              "Shall I proceed?",
+            ].join("\n")
+          : rawResponse);
 
       setPendingKubectlCommands(kubectlCommands);
       setMessages((current) => [...current, { role: "assistant", content: response }]);
@@ -526,10 +546,7 @@ export const LlmTopBarChat = () => {
               >
                 <div style={styles.messageActions}>
                   <div style={styles.messageBody}>{message.content}</div>
-                  <button
-                    style={styles.copyButton}
-                    onClick={() => void navigator.clipboard.writeText(message.content)}
-                  >
+                  <button style={styles.copyButton} onClick={() => void navigator.clipboard.writeText(message.content)}>
                     Copy
                   </button>
                 </div>

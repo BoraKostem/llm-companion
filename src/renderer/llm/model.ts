@@ -2,7 +2,7 @@ import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import { LlmPreferencesStore } from "../../common/store";
 import { collectUiContext, createSystemPrompt } from "./context";
-import { extractKubectlCommands, runKubectl, stripKubectlTags, type KubectlResult } from "./kubectl";
+import { extractKubectlCommands, type KubectlResult, runKubectl, stripKubectlTags } from "./kubectl";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -171,10 +171,7 @@ async function callOpenAI(
       `${baseUrl}/chat/completions`,
       {
         model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages,
-        ],
+        messages: [{ role: "system", content: systemPrompt }, ...messages],
       },
       { Authorization: `Bearer ${apiKey}` },
     ),
@@ -263,10 +260,7 @@ async function callOllama(
 
   const payload = (await postJson(`${normalizedBaseUrl}/api/chat`, {
     model,
-    messages: [
-      { role: "system", content: systemPrompt },
-      ...messages,
-    ],
+    messages: [{ role: "system", content: systemPrompt }, ...messages],
     stream: false,
   })) as OllamaChatResponse;
 
@@ -274,9 +268,7 @@ async function callOllama(
 }
 
 function formatKubectlResults(results: KubectlResult[]): string {
-  return results
-    .map((r) => `$ ${r.command}\n${r.error ? `ERROR: ${r.output}` : r.output}`)
-    .join("\n\n");
+  return results.map((r) => `$ ${r.command}\n${r.error ? `ERROR: ${r.output}` : r.output}`).join("\n\n");
 }
 
 export async function runAssistant(
@@ -289,10 +281,7 @@ export async function runAssistant(
   const systemPrompt = createSystemPrompt(context);
 
   // Build the conversation messages
-  const messages: Array<{ role: string; content: string }> = [
-    ...history,
-    { role: "user", content: prompt },
-  ];
+  const messages: Array<{ role: string; content: string }> = [...history, { role: "user", content: prompt }];
 
   // Tool-use loop: LLM can request kubectl commands
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {

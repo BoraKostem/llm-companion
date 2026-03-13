@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import { providerDefaults } from "../../common/llm-config";
 import { LlmPreferencesStore, type LlmProvider } from "../../common/store";
 
@@ -185,6 +185,4 @@ export const LlmPreferenceInput = () => {
   );
 };
 
-export const LlmPreferenceHint = () => (
-  <span>Choose provider in settings and switch models from the chat panel.</span>
-);
+export const LlmPreferenceHint = () => <span>Choose provider in settings and switch models from the chat panel.</span>;
