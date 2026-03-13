@@ -19,12 +19,12 @@ A Freelens extension that adds a context-aware LLM chat assistant for Kubernetes
 
 ## Supported Providers
 
-| Provider | API Key Required | Custom Base URL |
-|----------|-----------------|-----------------|
-| OpenAI | Yes | Optional |
-| Anthropic | Yes | No |
-| Google Gemini | Yes | No |
-| Ollama | No | Yes (default: `http://127.0.0.1:11434`) |
+| Provider     | API Key Required | Custom Base URL                          |
+| ------------ | ---------------- | ---------------------------------------- |
+| OpenAI       | Yes              | Optional                                 |
+| Anthropic    | Yes              | No                                       |
+| Google Gemini | Yes             | No                                       |
+| Ollama       | No               | Yes (default: `http://127.0.0.1:11434`) |
 
 ## Install
 

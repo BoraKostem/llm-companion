@@ -8,8 +8,8 @@
   "ignoreDependencies": [
     // used as vite plugin
     "@babel/plugin-proposal-decorators",
-    // provided by the application
-    "@freelensapp/extensions"
+    // provided by the host application, externalized in vite config
+    "mobx-react"
   ],
 
   "typescript": {
